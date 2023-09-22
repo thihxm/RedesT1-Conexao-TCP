@@ -33,7 +33,7 @@ def threaded(client: socket.socket):
             break
         elif data == b'Arquivo':
             print('Enviando arquivo')
-            file_data = convert_file_to_protocol('./textoa.txt')
+            file_data = convert_file_to_protocol('./texto.txt')
             client.send(file_data)
         else:
             print('Reenviando mensagem: ', data)

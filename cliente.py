@@ -27,7 +27,13 @@ def Main():
 
         # print the received message
         # here it would be a reverse of sent message
-        print('Received from the server :', pickle.loads(data))
+        if message == 'Arquivo':
+            file_data = pickle.loads(data)
+            print('Received from the server :', file_data)
+            with open('./textob.txt', 'wb') as file:
+                file.write(file_data['content'])
+        else:
+            print('Received from the server :', str(data.decode()))
 
         # ask the client whether he wants to continue
         ans = input('\nDo you want to continue (y/n): ')
