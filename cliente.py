@@ -1,5 +1,6 @@
 # Import socket module
 import socket
+import pickle
 
 
 def Main():
@@ -9,24 +10,24 @@ def Main():
     # Define the port on which you want to connect
     port = 12345
 
-    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    socket_connection = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
     # connect to server on local computer
-    s.connect((host,port))
+    socket_connection.connect((host,port))
 
     # message you send to server
-    message = "teste"
+    message = "Arquivo"
     while True:
 
         # message sent to server
-        s.send(message.encode('ascii'))
+        socket_connection.send(message.encode())
 
         # message received from server
-        data = s.recv(1024)
+        data = socket_connection.recv(4096)
 
         # print the received message
         # here it would be a reverse of sent message
-        print('Received from the server :', str(data.decode('ascii')))
+        print('Received from the server :', pickle.loads(data))
 
         # ask the client whether he wants to continue
         ans = input('\nDo you want to continue (y/n): ')
@@ -35,7 +36,7 @@ def Main():
         else:
             break
     # close the connection
-    s.close()
+    socket_connection.close()
 
 if __name__ == '__main__':
     Main()
