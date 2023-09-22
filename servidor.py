@@ -12,45 +12,55 @@ from utils import compute_sha256
 
 print_lock = threading.Lock()
 
-def send_message(client: socket.socket, message: str):
-    total_sent = 0
-    while total_sent < 4096:
-        sent = client.send(message[total_sent:])
-        if sent == 0:
-            raise RuntimeError("socket connection broken")
-        total_sent = total_sent + sent
-
 # thread function
 def threaded(client: socket.socket):
+    is_chatting = False
     while True:
 
         # data received from client
-        data = client.recv(4096)
-        if not data or data == b'Sair':
-            print('Bye')
-            
-            # lock released on exit
-            print_lock.release()
-            break
-        elif data == b'Arquivo':
-            print('Enviando arquivo')
-            file_data = convert_file_to_protocol('./texto.txt')
-            client.send(file_data)
-        else:
-            print('Reenviando mensagem: ', data)
+        if not is_chatting:
+            data = client.recv(4096)
+            command = data.decode()
+            if not data or data == b'Sair':
+                print('Bye')
+                
+                # lock released on exit
+                print_lock.release()
+                break
+            elif command.startswith('Arquivo'):
+                [command, file_name] = command.split(':')
+                print('Enviando arquivo')
+                file_data = convert_file_to_protocol(file_name)
+                client.send(file_data)
+            elif data == b'Chat':
+                print('Enviando mensagem')
+                client.send(b'Chat iniciado')
+            else:
+                print('Reenviando mensagem: ', data)
 
-            client.send(data)
+                client.send(data)
+        else:
+            data = client.recv(4096)
+            message = data.decode()
+            if message == 'Sair':
+                is_chatting = False
+                print('Chat finalizado')
+                continue
+
+            print('Client: ', data.decode())
+            message = input('Digite a mensagem: ')
+            client.send(message.encode())
 
     # connection closed
     client.close()
 
-def convert_file_to_protocol(file_path):
+def convert_file_to_protocol(file_name):
+    file_path = f'./server_files/{file_name}'
     try:    
         with open(file_path, 'rb') as file:
             file_as_path = Path(file.name)
             file_content = file.read()
             file_checksum = compute_sha256(file_content)
-            file_name = file_as_path.stem
             file_size = file_as_path.stat().st_size
 
         return pickle.dumps({
