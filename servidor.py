@@ -7,7 +7,8 @@ import pickle
 # import thread module
 from _thread import *
 import threading
-import hashlib
+from utils import compute_sha256
+
 
 print_lock = threading.Lock()
 
@@ -101,11 +102,6 @@ def Main():
         # Start a new thread and return its identifier
         start_new_thread(threaded, (client,))
     socket_server.close()
-    
-def compute_sha256(data):
-    hash_sha256 = hashlib.sha256()
-    hash_sha256.update(data)
-    return hash_sha256.hexdigest()
 
 
 if __name__ == '__main__':
