@@ -5,7 +5,8 @@ from utils import compute_sha256
 
 def Main():
     # local host IP '127.0.0.1'
-    host = '10.181.7.140'
+    #host = '10.181.7.140'
+    host = '127.0.0.1'
 
     # Define the port on which you want to connect
     port = 12345
@@ -17,21 +18,11 @@ def Main():
 
     isChatting = False
 
-    # message you send to server
-    #message = "Arquivo"
     while True:
 
         if not isChatting:
             message = input('\nDigite "Arquivo" para solicitar arquivo, "Chat" para iniciar um chat ou "Sair" para sair: ')
 
-            # message sent to server
-            #socket_connection.send(message.encode())
-
-            # message received from server
-            #data = socket_connection.recv(4096)
-
-            # print the received message
-            # here it would be a reverse of sent message
             if message == 'Arquivo':
                 arquivo = input('\nDigite o nome do arquivo: ')
                 message = message + ':' + arquivo
@@ -54,17 +45,13 @@ def Main():
                 with open(f'./arquivos/{file_data["name"]}', 'wb') as file:
                     file.write(file_data['content'])
             elif message == 'Chat':
+                socket_connection.send(message.encode())
                 isChatting = True
             elif message == 'Sair':
                 break
 
-            # ask the client whether he wants to continue
-            # ans = input('\nDo you want to continue (y/n): ')
-            # if ans == 'y':
-            #     continue
-            # else:
-            #     break
         else:
+            print('Aguardando resposta...')
             data = socket_connection.recv(4096)
             print('\nServidor: ' + data.decode())
             msg = input('\nDigite a mensagem ou "Sair" para sair: ')
