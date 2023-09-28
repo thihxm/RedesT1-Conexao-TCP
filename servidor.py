@@ -18,28 +18,7 @@ def threaded(client: socket.socket):
     while True:
 
         # data received from client
-        if not is_chatting:
-            data = client.recv(4096)
-            command = data.decode()
-            if not data or data == b'Sair':
-                print('Bye')
-                
-                # lock released on exit
-                print_lock.release()
-                break
-            elif command.startswith('Arquivo'):
-                [command, file_name] = command.split(':')
-                print('Enviando arquivo')
-                file_data = convert_file_to_protocol(file_name)
-                client.send(file_data)
-            elif data == b'Chat':
-                print('Enviando mensagem')
-                client.send(b'Chat iniciado')
-            else:
-                print('Reenviando mensagem: ', data)
-
-                client.send(data)
-        else:
+        if is_chatting:
             data = client.recv(4096)
             message = data.decode()
             if message == 'Sair':
@@ -50,6 +29,28 @@ def threaded(client: socket.socket):
             print('Client: ', data.decode())
             message = input('Digite a mensagem: ')
             client.send(message.encode())
+            continue
+
+        data = client.recv(4096)
+        command = data.decode()
+        if not data or data == b'Sair':
+            print('Bye')
+            
+            # lock released on exit
+            print_lock.release()
+            break
+        elif command.startswith('Arquivo'):
+            [command, file_name] = command.split(':')
+            print('Enviando arquivo')
+            file_data = convert_file_to_protocol(file_name)
+            client.send(file_data)
+        elif data == b'Chat':
+            print('Enviando mensagem')
+            client.send(b'Chat iniciado')
+        else:
+            print('Reenviando mensagem: ', data)
+
+            client.send(data)
 
     # connection closed
     client.close()
