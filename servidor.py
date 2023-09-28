@@ -45,7 +45,8 @@ def threaded(client: socket.socket):
             file_data = convert_file_to_protocol(file_name)
             client.send(file_data)
         elif data == b'Chat':
-            print('Enviando mensagem')
+            print('Enviando mensagem de inicio de chat...')
+            is_chatting = True
             client.send(b'Chat iniciado')
         else:
             print('Reenviando mensagem: ', data)
@@ -81,7 +82,7 @@ def convert_file_to_protocol(file_name):
         })
 
 def Main():
-    host = ""
+    host = "127.0.0.1"
 
     # reserve a port on your computer
     # in our case it is 12345 but it
