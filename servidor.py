@@ -82,7 +82,7 @@ def convert_file_to_protocol(file_name):
         })
 
 def Main():
-    host = "127.0.0.1"
+    host = ""
 
     # reserve a port on your computer
     # in our case it is 12345 but it
