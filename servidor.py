@@ -94,8 +94,6 @@ def Main():
     ip_address = socket.gethostbyname_ex(hostname)
     print("socket binded to port", port)
     print(f"Server IP is {ip_address}")
-    file_data = convert_file_to_protocol('./texto.txt')
-    print(file_data)
 
     # put the socket into listening mode
     socket_server.listen(5)
